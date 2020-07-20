@@ -1,33 +1,42 @@
-var config = {
+let TitleScreen = new Phaser.Class({
+    Extends: Phaser.Scene,
+
+    initialize: function TitleScreen(){
+        Phaser.Scene.call(this, {key: 'titleScreen', active: true});
+    },
+
+    preload: function(){
+        
+    },
+
+    create: function(){
+
+    }
+})
+
+let GameScreen = new Phaser.Class({
+    Extends: Phaser.Scene,
+
+    initialize: function GameScreen(){
+        Phaser.Scene.call(this, {key: 'gameScreen', active: true});
+    },
+
+    preload: function(){
+
+    },
+
+    create: function(){
+
+    }
+})
+
+
+let config = {
     type: Phaser.AUTO,
     width: 500,
     height: 500,
-    scene: {
-        preload: preload,
-        create: create,
-        render: {
-            
-        }
-    },
-    antialias: true,
-    pixelArt: false
+    scene: [TitleScreen, GameScreen]
 };
 
-var game = new Phaser.Game(config);
+let game = new Phaser.Game(config);
 
-function preload(){
-    this.load.image('ducks', 'ducks.jpg');
-    
-}
-
-function create(){
-    
-    duck = this.add.image(config.height/2,config.width/2,'ducks');
-    duck.displayHeight= 400;
-    duck.displayWidth = 400;
-    console.log(config.width);
-}
-
-function update(){
-
-}
