@@ -22,7 +22,7 @@ let GameScreen = new Phaser.Class({
     },
 
     preload: function(){
-
+        
     },
 
     create: function(){
