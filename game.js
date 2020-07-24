@@ -27,8 +27,17 @@ let GameScreen = new Phaser.Class({
     },
 
     create: function(){
-        this.cell = this.add.image(10, 10, "board", 2);
-        this.cell.setInteractive();
+        //this.cell = this.add.image(10, 10, "board", 2);
+        //this.cell.setInteractive();
+        let cell = this.add.sprite(50, 50, "board", 2).setInteractive();
+
+        cell.on("pointerdown", function(){
+            cell.setFrame(1);
+        });
+
+        cell.on("pointerup", function(){
+            cell.setFrame(2);
+        });
     }
 })
 
