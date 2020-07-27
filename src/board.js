@@ -10,36 +10,40 @@ const cell_states = {
     SEVEN: 7,
     EIGHT: 8,
     COVERED: 9,
-    DISCOVERED: 10,
-    FLAGGED: 11,
-    MARKED: 12,
-    GRAY_MINE: 13,
-    RED_MINE: 14,
-    WRONG_MINE: 15,
-    MARKED_CLICKED: 16
+    FLAGGED: 10,
+    MARKED: 11,
+    GRAY_MINE: 12,
+    RED_MINE: 13,
+    WRONG_MINE: 14,
+    MARKED_CLICKED: 15
 }
 
-let Cell = class {
+class Cell extends Phaser.GameObjects.Sprite{
 
-    constructor(x, y, mine){
+    constructor(scene, x, y, mine){
+
+        let default_state = cell_states.COVERED;
+
+        super(scene, x, y, "board", default_state);
+        scene.add.existing(this);
 
         this.x = x;
         this.y = y;
-        this.mined = mine;
-        this.cell_state = cell_states.COVERED;
+        this.mined = false;
+        this.cell_state = default_state;
         this.nearby_mines = 0;
 
-        this.spriteSetup();
-        
+        this.setInteractive();
     }
 
-    spriteSetup = function(){
-        //sprite 
-        this.sprite = game.add.sprite(x, y, "board", this.cell_state).setInteractive();
-        this.sprite.on("pointerdown", function(){
-            cell.setFrame(1);
-        });
+    setState = function(state){
+        this.cell_state = state;
     }
     
-    
+}
+
+class Board extends Phaser.GameObjects.Sprite{
+    constructor(width, height, mines){
+
+    }
 }
