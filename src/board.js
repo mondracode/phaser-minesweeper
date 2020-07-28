@@ -20,7 +20,7 @@ const cell_states = {
 
 class Cell extends Phaser.GameObjects.Sprite{
 
-    constructor(scene, x, y, mine){
+    constructor(scene, x, y, xpos, ypos, mine){
 
         let default_state = cell_states.COVERED;
 
@@ -29,11 +29,25 @@ class Cell extends Phaser.GameObjects.Sprite{
 
         this.x = x;
         this.y = y;
+        this.xpos = xpos; //board coordinate
+        this.ypos = ypos;
         this.mined = false;
         this.cell_state = default_state;
         this.nearby_mines = 0;
 
         this.setInteractive();
+        this.on("pointerdown", function(){
+            this.setFrame(cell_states.ZERO);
+        });
+
+        this.on("pointerup", function(){
+            this.setFrame(default_state);
+        });
+
+        this.on("pointerout", function(){
+            this.setFrame(default_state);
+        });
+
     }
 
     setState = function(state){
@@ -42,8 +56,37 @@ class Cell extends Phaser.GameObjects.Sprite{
     
 }
 
-class Board extends Phaser.GameObjects.Sprite{
-    constructor(width, height, mines){
+class Board{
+    constructor(scene, x, y, width, height, mines){
 
+        this.cells = []; //column array
+
+        for(let i = 0; i < width; i++){
+            this.cells[i] = []; //columns are created 
+            for(let j = 0; j < height; j++){
+                this.cells[i][j] = new Cell(scene, x + (16*i), y + (16*j), i, j, false); //columns are filled
+            }
+        }
+
+        console.table(this.cells); //debug
+        this.cells[1][0].mined = true;
+        this.cells[2][0].mined = true;
+        this.cells[2][2].mined = true;
+
+        console.log(this.getNearbyMines(this.cells[1][1]));
     }
+
+
+    //TO DO: fix this function for 0 coordinates
+    getNearbyMines = function(cell){
+        let sum = 0;
+        for(let i = cell.xpos - 1; i <= cell.xpos + 1; i++){
+            for(let j = cell.ypos - 1; j <= cell.ypos + 1; j++){
+                if(!(i == cell.xpos && j == cell.ypos)){
+                    sum += this.cells[i][j].mined ? 1 : 0;
+                }
+            }
+        }
+        return sum;
+    };
 }

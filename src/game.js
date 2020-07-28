@@ -29,7 +29,7 @@ let GameScreen = new Phaser.Class({
     create: function(){
         //this.cell = this.add.sprite(10, 10, "board", 2);
         //this.cell.setInteractive();
-        
+        let board = new Board(this, 130, 130, 15, 15, 1);
     }
 })
 
@@ -43,4 +43,3 @@ let config = {
 };
 
 let game = new Phaser.Game(config);
-
