@@ -37,8 +37,8 @@ let config = {
     type: Phaser.AUTO,
     width: 500,
     height: 500,
-    scene: [TitleScreen, GameScreen]
-    //scene: GameScreen
+    scene: [TitleScreen, GameScreen],
+    disableContextMenu: true
 };
 
 let game = new Phaser.Game(config);

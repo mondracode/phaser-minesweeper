@@ -36,25 +36,58 @@ class Cell extends Phaser.GameObjects.Sprite{
         this.cell_state = default_state;
         this.nearby_mines = 0;
 
-        this.setInteractive();
         
-        this.on("pointerdown", function(){
-
-            //sprite changes depending on conditions go here
-            if(this.mined){
-                this.setFrame(cell_states.RED_MINE);
-            }
-            else{
-                this.setFrame(this.getNearbyMines());
-            }
-            
-        });
         /* this.on("pointerup", function(){
             this.setFrame(default_state);
         }); */
         /* this.on("pointerout", function(){
             this.setFrame(default_state);
         }); */
+
+        this.click = function(){
+
+            //right click
+            if(game.input.activePointer.rightButtonDown()){
+                //gotta fix this
+/*                 switch(this.cell_state){
+                    case cell_states.COVERED:
+                        this.setState(cell_states.FLAGGED);
+                        console.log(this.cell_state);
+
+                    case cell_states.FLAGGED:
+                        this.setState(cell_states.MARKED);
+
+                    case cell_states.MARKED:
+                        this.setState(cell_states.COVERED);
+                } */
+            }
+
+            //left click
+            else{
+                //sprite changes depending on conditions go here
+                if(this.mined){
+                    this.setState(cell_states.RED_MINE);
+                }
+                else{
+                    let mines = this.getNearbyMines();
+                    this.setState(mines);
+                    if(mines == 0){
+                        for(let i = this.xpos - 1; i <= this.xpos + 1; i++){
+                            for(let j = this.ypos - 1; j <= this.ypos + 1; j++){
+                                if(!(i == this.xpos && j == this.ypos)){
+                                    if((i > -1 && i < this.board.cells.length) && (j > -1 && j < this.board.cells[0].length)){
+                                        this.board.cells[i][j].setState(this.board.cells[i][j].getNearbyMines());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    
+                }
+            }
+            
+        };
 
         this.getNearbyMines = function(){
             let sum = 0;
@@ -68,14 +101,16 @@ class Cell extends Phaser.GameObjects.Sprite{
             }
             return sum;
         }
+
+        this.setState = function(state){
+            this.cell_state = state;
+            this.setFrame(state);        
+        }
+
+        this.setInteractive();
+        this.on("pointerdown", this.click);
     }
 
-    setState = function(state){
-        this.cell_state = state;
-        this.setFrame(state);        
-    }
-    
-    
 }
 
 class Board{
