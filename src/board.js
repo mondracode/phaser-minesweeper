@@ -20,7 +20,7 @@ const cell_states = {
 
 class Cell extends Phaser.GameObjects.Sprite{
 
-    constructor(scene, x, y, xpos, ypos, mine){
+    constructor(board, scene, x, y, xpos, ypos, mine){
 
         let default_state = cell_states.COVERED;
 
@@ -31,28 +31,50 @@ class Cell extends Phaser.GameObjects.Sprite{
         this.y = y;
         this.xpos = xpos; //board coordinate
         this.ypos = ypos;
-        this.mined = false;
+        this.board = board;
+        this.mined = mine;
         this.cell_state = default_state;
         this.nearby_mines = 0;
 
         this.setInteractive();
+        
         this.on("pointerdown", function(){
-            this.setFrame(cell_states.ZERO);
-        });
 
-        this.on("pointerup", function(){
+            //sprite changes depending on conditions go here
+            if(this.mined){
+                this.setFrame(cell_states.RED_MINE);
+            }
+            else{
+                this.setFrame(this.getNearbyMines());
+            }
+            
+        });
+        /* this.on("pointerup", function(){
             this.setFrame(default_state);
-        });
-
-        this.on("pointerout", function(){
+        }); */
+        /* this.on("pointerout", function(){
             this.setFrame(default_state);
-        });
+        }); */
 
+        this.getNearbyMines = function(){
+            let sum = 0;
+            for(let i = this.xpos - 1; i <= this.xpos + 1; i++){
+                for(let j = this.ypos - 1; j <= this.ypos + 1; j++){
+                    if(!(i == this.xpos && j == this.ypos)){
+                        if((i > -1 && i < this.board.cells.length) && (j > -1 && j < this.board.cells[0].length))
+                        sum += this.board.cells[i][j].mined ? 1 : 0;
+                    }
+                }
+            }
+            return sum;
+        }
     }
 
     setState = function(state){
         this.cell_state = state;
+        this.setFrame(state);        
     }
+    
     
 }
 
@@ -64,30 +86,30 @@ class Board{
         for(let i = 0; i < width; i++){
             this.cells[i] = []; //columns are created 
             for(let j = 0; j < height; j++){
-                this.cells[i][j] = new Cell(scene, x + (16*i), y + (16*j), i, j, false); //columns are filled
+                this.cells[i][j] = new Cell(this, scene, x + (16*i), y + (16*j), i, j, false); //columns are filled
             }
         }
 
-        console.table(this.cells); //debug
-        this.cells[0][1].mined = true;
-        this.cells[1][0].mined = true;
-        this.cells[1][1].mined = true;
 
-        console.log(this.getNearbyMines(this.cells[0][0]));
-    }
+        this.createRandomMines = function(number_of_mines){
+            let mine_count = 0;
+            while(mine_count <= number_of_mines){
+                let rand_x = Math.floor(Math.random() * width);
+                let rand_y = Math.floor(Math.random() * height);
 
-
-    //TO DO: test this function for 0 coordinates
-    getNearbyMines = function(cell){
-        let sum = 0;
-        for(let i = cell.xpos - 1; i <= cell.xpos + 1; i++){
-            for(let j = cell.ypos - 1; j <= cell.ypos + 1; j++){
-                if(!(i == cell.xpos && j == cell.ypos)){
-                    if((i > -1 && i < this.cells.length) && (j > -1 && j < this.cells[0].length))
-                    sum += this.cells[i][j].mined ? 1 : 0;
+                //if cell isn't mined already, mine it
+                if(!this.cells[rand_x][rand_y].mined){
+                    this.cells[rand_x][rand_y].mined = true;
+                    mine_count++;
                 }
             }
-        }
-        return sum;
-    };
+        };
+
+        this.createRandomMines(mines);
+
+        console.table(this.cells); //debug
+
+        console.log(this.cells[0][0].getNearbyMines());
+    }
+    
 }
