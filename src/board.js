@@ -69,20 +69,21 @@ class Board{
         }
 
         console.table(this.cells); //debug
+        this.cells[0][1].mined = true;
         this.cells[1][0].mined = true;
-        this.cells[2][0].mined = true;
-        this.cells[2][2].mined = true;
+        this.cells[1][1].mined = true;
 
-        console.log(this.getNearbyMines(this.cells[1][1]));
+        console.log(this.getNearbyMines(this.cells[0][0]));
     }
 
 
-    //TO DO: fix this function for 0 coordinates
+    //TO DO: test this function for 0 coordinates
     getNearbyMines = function(cell){
         let sum = 0;
         for(let i = cell.xpos - 1; i <= cell.xpos + 1; i++){
             for(let j = cell.ypos - 1; j <= cell.ypos + 1; j++){
                 if(!(i == cell.xpos && j == cell.ypos)){
+                    if((i > -1 && i < this.cells.length) && (j > -1 && j < this.cells[0].length))
                     sum += this.cells[i][j].mined ? 1 : 0;
                 }
             }

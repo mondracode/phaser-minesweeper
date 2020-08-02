@@ -33,7 +33,6 @@ let GameScreen = new Phaser.Class({
     }
 })
 
-
 let config = {
     type: Phaser.AUTO,
     width: 500,
