@@ -67,24 +67,27 @@ class Cell extends Phaser.GameObjects.Sprite{
             //i should probably write this with recursion
             else{
                 //sprite changes depending on conditions go here
+                
                 if(this.mined){
                     this.setState(cell_states.RED_MINE);
                 }
                 else{
                     let mines = this.getNearbyMines();
                     this.setState(mines);
-                    if(mines == 0){
+                    if(mines > 0){
+                        return;
+                    }
+                    else if(mines == 0){
                         for(let i = this.xpos - 1; i <= this.xpos + 1; i++){
                             for(let j = this.ypos - 1; j <= this.ypos + 1; j++){
                                 if(!(i == this.xpos && j == this.ypos)){
                                     if((i > -1 && i < this.board.cells.length) && (j > -1 && j < this.board.cells[0].length)){
-                                        this.board.cells[i][j].setState(this.board.cells[i][j].getNearbyMines());
+                                        this.board.cells[i][j].click();
                                     }
                                 }
                             }
                         }
                     }
-                    
                     
                 }
             }
