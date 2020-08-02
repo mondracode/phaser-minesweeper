@@ -63,6 +63,8 @@ class Cell extends Phaser.GameObjects.Sprite{
             }
 
             //left click
+
+            //i should probably write this with recursion
             else{
                 //sprite changes depending on conditions go here
                 if(this.mined){
