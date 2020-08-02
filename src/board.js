@@ -91,9 +91,9 @@ class Board{
         }
 
 
-        this.createRandomMines = function(number_of_mines){
+        this.createRandomMines = function(){
             let mine_count = 0;
-            while(mine_count <= number_of_mines){
+            while(mine_count < mines){
                 let rand_x = Math.floor(Math.random() * width);
                 let rand_y = Math.floor(Math.random() * height);
 
@@ -102,14 +102,14 @@ class Board{
                     this.cells[rand_x][rand_y].mined = true;
                     mine_count++;
                 }
+                console.log(mine_count);
             }
         };
 
-        this.createRandomMines(mines);
+        this.createRandomMines();
 
-        console.table(this.cells); //debug
-
-        console.log(this.cells[0][0].getNearbyMines());
+        /* console.table(this.cells); //debug
+        console.log(this.cells[0][0].getNearbyMines()); */
     }
     
 }
