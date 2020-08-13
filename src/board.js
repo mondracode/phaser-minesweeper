@@ -51,12 +51,21 @@ class Cell extends Phaser.GameObjects.Sprite{
             }
 
             else{
+                if(this.board.click_count == 0){
+                    do{
+                        this.board.createRandomMines();
+                    }while(this.mined);
+
+                }
+                this.board.click_count++;
+                console.log(this.board.click_count);
                 this.leftClick();
             }
             
         };
 
         this.leftClick = function(){
+
             if(this.mined){
                 this.setState(cell_states.RED_MINE);
             }
@@ -132,6 +141,7 @@ class Board{
     constructor(scene, x, y, width, height, mines){
 
         this.cells = []; //column array
+        this.click_count = 0;
 
         for(let i = 0; i < width; i++){
             this.cells[i] = []; //columns are created 
@@ -156,7 +166,7 @@ class Board{
             }
         };
 
-        this.createRandomMines();
+        //this.createRandomMines();
     }
-    
+
 }
