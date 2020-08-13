@@ -51,14 +51,6 @@ class Cell extends Phaser.GameObjects.Sprite{
             }
 
             else{
-                if(this.board.click_count == 0){
-                    do{
-                        this.board.createRandomMines();
-                    }while(this.mined);
-
-                }
-                this.board.click_count++;
-                console.log(this.board.click_count);
                 this.leftClick();
             }
             
@@ -66,36 +58,45 @@ class Cell extends Phaser.GameObjects.Sprite{
 
         this.leftClick = function(){
 
-            if(this.mined){
+            if(this.board.click_count == 0){
+                //keep creating random mines until current cell isn't mined on the first click
+                do{
+                    this.board.createRandomMines();
+                }while(this.mined);
+
+            }
+            this.board.click_count++;
+
+            if(this.mined){ //if player loses, this happens
                 this.setState(cell_states.RED_MINE);
             }
             else{
                 
-                //función recursiva
+                //recursive function
                 this.discoverBoard();
             }
         }
 
         this.rightClick = function(){
-
+            
         }
 
-        this.discoverBoard = function(flag){
+        this.discoverBoard = function(flag){ //recursively discovers cells with no adjacent mines until it finds an edge
             let mines = this.getNearbyMines();
             
             if(!flag){
-                flag = 0;
+                flag = 0;  //initialize flag for first recursion
             }
 
             if(mines > 0){
-                flag++;
+                flag++; //if there's an edge, add one to the flag
             }
 
             if(!this.mined){
-                this.setState(mines);
+                this.setState(mines); //change sprite depending on surrounding mines
             }
             
-            this.already_clicked = true;
+            this.already_clicked = true; //this is here in order to avoid the function to iterate infintely over the same cells
 
             for(let i = this.xpos - 1; i <= this.xpos + 1; i++){
                 for(let j = this.ypos - 1; j <= this.ypos + 1; j++){
@@ -103,7 +104,7 @@ class Cell extends Phaser.GameObjects.Sprite{
                         if((i > -1 && i < this.board.cells.length) && (j > -1 && j < this.board.cells[0].length)){
                             if((!this.board.cells[i][j].already_clicked)){
                                 if(flag > 0){
-                                    return;
+                                    return; //if flag was modified, that means we're at an edge and it's time to stop recursion
                                 }
                                 this.board.cells[i][j].discoverBoard(flag);
                             }
@@ -113,7 +114,7 @@ class Cell extends Phaser.GameObjects.Sprite{
             }
         }
 
-        this.getNearbyMines = function(){
+        this.getNearbyMines = function(){ //this scans all adjacent cells and checks for mines, returning an int
             let sum = 0;
             for(let i = this.xpos - 1; i <= this.xpos + 1; i++){
                 for(let j = this.ypos - 1; j <= this.ypos + 1; j++){
@@ -131,7 +132,7 @@ class Cell extends Phaser.GameObjects.Sprite{
             this.setFrame(state);        
         }
 
-        this.setInteractive();
+        this.setInteractive();  //enable mouse events for every cell
         this.on("pointerdown", this.click);
     }
 
@@ -146,7 +147,7 @@ class Board{
         for(let i = 0; i < width; i++){
             this.cells[i] = []; //columns are created 
             for(let j = 0; j < height; j++){
-                //cada 16 pixeles va una celda
+                //there's a cell every 16 pixels
                 this.cells[i][j] = new Cell(this, scene, x + (16*i), y + (16*j), i, j, false); //columns are filled
             }
         }
@@ -154,19 +155,17 @@ class Board{
         this.createRandomMines = function(){
             let mine_count = 0;
             while(mine_count < mines){
-                let rand_x = Math.floor(Math.random() * width);
-                let rand_y = Math.floor(Math.random() * height);
+                let rand_x = Math.floor(Math.random() * width); //this creates a random number between 0 and width
+                let rand_y = Math.floor(Math.random() * height);//same with this but with height
 
                 //if cell isn't mined already, mine it
                 if(!this.cells[rand_x][rand_y].mined){
                     this.cells[rand_x][rand_y].mined = true;
                     mine_count++;
                 }
-                console.log(mine_count);
+                //console.log(mine_count); debug
             }
-        };
-
-        //this.createRandomMines();
+        }
     }
 
 }
