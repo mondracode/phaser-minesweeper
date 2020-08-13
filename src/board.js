@@ -73,25 +73,27 @@ class Cell extends Phaser.GameObjects.Sprite{
 
         this.discoverBoard = function(){
             let mines = this.getNearbyMines();
-            if(mines == 0){
-                return;
-            }
-
-            else{
+            
+            if(!this.mined){
                 this.setState(mines);
-                this.already_clicked = true;
+            }
+            
+            this.already_clicked = true;
 
-                for(let i = this.xpos - 1; i <= this.xpos + 1; i++){
-                    for(let j = this.ypos - 1; j <= this.ypos + 1; j++){
-                        if(!(i == this.xpos && j == this.ypos)){
-                            if((i > -1 && i < this.board.cells.length) && (j > -1 && j < this.board.cells[0].length))
-                                if(!this.board.cells[i][j].already_clicked){
-                                    this.board.cells[i][j].discoverBoard();
-                                }
-                        }
+            for(let i = this.xpos - 1; i <= this.xpos + 1; i++){
+                for(let j = this.ypos - 1; j <= this.ypos + 1; j++){
+                    if(!(i == this.xpos && j == this.ypos)){
+                        if((i > -1 && i < this.board.cells.length) && (j > -1 && j < this.board.cells[0].length)){
+                            if((!this.board.cells[i][j].already_clicked)){
+                                counter++;
+                                this.board.cells[i][j].discoverBoard();
+                                
+                            }
+                        }                        
                     }
                 }
             }
+
         }
 
         this.getNearbyMines = function(){
@@ -126,10 +128,10 @@ class Board{
         for(let i = 0; i < width; i++){
             this.cells[i] = []; //columns are created 
             for(let j = 0; j < height; j++){
+                //cada 16 pixeles va una celda
                 this.cells[i][j] = new Cell(this, scene, x + (16*i), y + (16*j), i, j, false); //columns are filled
             }
         }
-
 
         this.createRandomMines = function(){
             let mine_count = 0;
@@ -147,9 +149,6 @@ class Board{
         };
 
         this.createRandomMines();
-
-        /* console.table(this.cells); //debug
-        console.log(this.cells[0][0].getNearbyMines()); */
     }
     
 }
