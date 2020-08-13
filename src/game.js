@@ -39,7 +39,7 @@ let config = {
     height: 500,
     scene: [TitleScreen, GameScreen],
     disableContextMenu: true,
-    pixelArt: false
+    pixelArt: true
 };
 
 let game = new Phaser.Game(config);
