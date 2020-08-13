@@ -73,7 +73,7 @@ class Cell extends Phaser.GameObjects.Sprite{
 
         this.discoverBoard = function(){
             let mines = this.getNearbyMines();
-            
+
             if(!this.mined){
                 this.setState(mines);
             }
@@ -85,7 +85,6 @@ class Cell extends Phaser.GameObjects.Sprite{
                     if(!(i == this.xpos && j == this.ypos)){
                         if((i > -1 && i < this.board.cells.length) && (j > -1 && j < this.board.cells[0].length)){
                             if((!this.board.cells[i][j].already_clicked)){
-                                counter++;
                                 this.board.cells[i][j].discoverBoard();
                                 
                             }
