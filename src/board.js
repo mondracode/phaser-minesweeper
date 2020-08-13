@@ -71,8 +71,16 @@ class Cell extends Phaser.GameObjects.Sprite{
 
         }
 
-        this.discoverBoard = function(){
+        this.discoverBoard = function(flag){
             let mines = this.getNearbyMines();
+            
+            if(!flag){
+                flag = 0;
+            }
+
+            if(mines > 0){
+                flag++;
+            }
 
             if(!this.mined){
                 this.setState(mines);
@@ -85,14 +93,15 @@ class Cell extends Phaser.GameObjects.Sprite{
                     if(!(i == this.xpos && j == this.ypos)){
                         if((i > -1 && i < this.board.cells.length) && (j > -1 && j < this.board.cells[0].length)){
                             if((!this.board.cells[i][j].already_clicked)){
-                                this.board.cells[i][j].discoverBoard();
-                                
+                                if(flag > 0){
+                                    return;
+                                }
+                                this.board.cells[i][j].discoverBoard(flag);
                             }
                         }                        
                     }
                 }
             }
-
         }
 
         this.getNearbyMines = function(){
