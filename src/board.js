@@ -122,7 +122,7 @@ class Cell extends Phaser.GameObjects.Sprite{
                         if((i > -1 && i < this.board.cells.length) && (j > -1 && j < this.board.cells[0].length)){
                             if((!this.board.cells[i][j].already_clicked) && (this.board.cells[i][j].cell_state != cell_states.FLAGGED)){
                                 if(flag > 0){
-                                    return; //if flag was modified, that means we're at an edge and it's time to stop recursion
+                                    return; //if flag is modified, that means we're at an edge and it's time to stop recursion
                                 }
                                 this.board.cells[i][j].discoverBoard(flag);
                             }
