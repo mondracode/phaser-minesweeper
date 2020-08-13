@@ -34,7 +34,8 @@ class Cell extends Phaser.GameObjects.Sprite{
         this.already_clicked = false;
         this.board = board;
         this.mined = mine;
-        this.cell_state = default_state;
+        this.flagged = false;
+        this.cell_state = cell_states.COVERED;
         this.nearby_mines = 0;
 
         /* this.on("pointerup", function(){
@@ -53,32 +54,35 @@ class Cell extends Phaser.GameObjects.Sprite{
             else{
                 this.leftClick();
             }
-            
-        };
+        }
 
         this.leftClick = function(){
-
-            if(this.board.click_count == 0){
-                //keep creating random mines until current cell isn't mined on the first click
-                do{
-                    this.board.createRandomMines();
-                }while(this.mined);
-
-            }
-            this.board.click_count++;
-
-            if(this.mined){ //if player loses, this happens
-                this.setState(cell_states.RED_MINE);
-            }
-            else{
+            console.log(this.cell_state);
+            if(!(this.cell_state == cell_states.FLAGGED)){
                 
-                //recursive function
-                this.discoverBoard();
+                if(this.board.click_count == 0){
+                    //keep creating random mines until current cell isn't mined on the first click
+                    do{
+                        this.board.createRandomMines();
+                    }while(this.mined);
+    
+                }
+                this.board.click_count++;
+    
+                if(this.mined){ //if player loses, this happens
+                    this.setState(cell_states.RED_MINE);
+                }
+                else{
+                    
+                    //recursive function
+                    this.discoverBoard();
+                }
             }
         }
 
         this.rightClick = function(){
-            
+            this.flagged = !this.flagged;
+            this.setState(this.flagged ? cell_states.FLAGGED : cell_states.COVERED);
         }
 
         this.discoverBoard = function(flag){ //recursively discovers cells with no adjacent mines until it finds an edge
@@ -102,7 +106,7 @@ class Cell extends Phaser.GameObjects.Sprite{
                 for(let j = this.ypos - 1; j <= this.ypos + 1; j++){
                     if(!(i == this.xpos && j == this.ypos)){
                         if((i > -1 && i < this.board.cells.length) && (j > -1 && j < this.board.cells[0].length)){
-                            if((!this.board.cells[i][j].already_clicked)){
+                            if((!this.board.cells[i][j].already_clicked) && (this.board.cells[i][j].cell_state != cell_states.FLAGGED)){
                                 if(flag > 0){
                                     return; //if flag was modified, that means we're at an edge and it's time to stop recursion
                                 }
@@ -135,7 +139,6 @@ class Cell extends Phaser.GameObjects.Sprite{
         this.setInteractive();  //enable mouse events for every cell
         this.on("pointerdown", this.click);
     }
-
 }
 
 class Board{
@@ -167,5 +170,4 @@ class Board{
             }
         }
     }
-
 }

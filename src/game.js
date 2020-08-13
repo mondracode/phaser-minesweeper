@@ -29,7 +29,7 @@ let GameScreen = new Phaser.Class({
     create: function(){
         //this.cell = this.add.sprite(10, 10, "board", 2);
         //this.cell.setInteractive();
-        let board = new Board(this, 130, 130, 15, 15, 50);
+        let board = new Board(this, 130, 130, 15, 15, 15);
     }
 })
 
@@ -38,7 +38,8 @@ let config = {
     width: 500,
     height: 500,
     scene: [TitleScreen, GameScreen],
-    disableContextMenu: true
+    disableContextMenu: true,
+    pixelArt: false
 };
 
 let game = new Phaser.Game(config);
