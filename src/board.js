@@ -31,12 +31,12 @@ class Cell extends Phaser.GameObjects.Sprite{
         this.y = y;
         this.xpos = xpos; //board coordinate
         this.ypos = ypos;
+        this.already_clicked = false;
         this.board = board;
         this.mined = mine;
         this.cell_state = default_state;
         this.nearby_mines = 0;
 
-        
         /* this.on("pointerup", function(){
             this.setFrame(default_state);
         }); */
@@ -46,53 +46,53 @@ class Cell extends Phaser.GameObjects.Sprite{
 
         this.click = function(){
 
-            //right click
             if(game.input.activePointer.rightButtonDown()){
-                //gotta fix this
-/*                 switch(this.cell_state){
-                    case cell_states.COVERED:
-                        this.setState(cell_states.FLAGGED);
-                        console.log(this.cell_state);
-
-                    case cell_states.FLAGGED:
-                        this.setState(cell_states.MARKED);
-
-                    case cell_states.MARKED:
-                        this.setState(cell_states.COVERED);
-                } */
+                this.rightClick();    
             }
 
-            //left click
-
-            //i should probably write this with recursion
             else{
-                //sprite changes depending on conditions go here
-                
-                if(this.mined){
-                    this.setState(cell_states.RED_MINE);
-                }
-                else{
-                    let mines = this.getNearbyMines();
-                    this.setState(mines);
-                    if(mines > 0){
-                        return;
-                    }
-                    else if(mines == 0){
-                        for(let i = this.xpos - 1; i <= this.xpos + 1; i++){
-                            for(let j = this.ypos - 1; j <= this.ypos + 1; j++){
-                                if(!(i == this.xpos && j == this.ypos)){
-                                    if((i > -1 && i < this.board.cells.length) && (j > -1 && j < this.board.cells[0].length)){
-                                        this.board.cells[i][j].click();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                }
+                this.leftClick();
             }
             
         };
+
+        this.leftClick = function(){
+            if(this.mined){
+                this.setState(cell_states.RED_MINE);
+            }
+            else{
+                
+                //función recursiva
+                this.discoverBoard();
+            }
+        }
+
+        this.rightClick = function(){
+
+        }
+
+        this.discoverBoard = function(){
+            let mines = this.getNearbyMines();
+            if(mines == 0){
+                return;
+            }
+
+            else{
+                this.setState(mines);
+                this.already_clicked = true;
+
+                for(let i = this.xpos - 1; i <= this.xpos + 1; i++){
+                    for(let j = this.ypos - 1; j <= this.ypos + 1; j++){
+                        if(!(i == this.xpos && j == this.ypos)){
+                            if((i > -1 && i < this.board.cells.length) && (j > -1 && j < this.board.cells[0].length))
+                                if(!this.board.cells[i][j].already_clicked){
+                                    this.board.cells[i][j].discoverBoard();
+                                }
+                        }
+                    }
+                }
+            }
+        }
 
         this.getNearbyMines = function(){
             let sum = 0;
